@@ -1,14 +1,12 @@
 name: Python Package using Conda
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
+  build-ubuntu:
+    runs-on: ubuntu-latest
     strategy:
       max-parallel: 5
-      matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
 
     steps:
     - uses: actions/checkout@v2
