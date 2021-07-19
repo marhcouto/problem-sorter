@@ -1,8 +1,9 @@
+from tkinter.constants import N
 from gui_menu import Menu
 from position import Position
 from gui_window import Window
 
-from tkinter import Button, Label, Entry, LabelFrame, CENTER, NE, NW
+from tkinter import Button, Canvas, Label, Entry, LabelFrame, CENTER, NE, NW, Widget, font, Listbox
 
 
 
@@ -63,23 +64,41 @@ class SearchMenuFactory(MenuFactory):
     def makeMenu(self):
         menu = Menu()
 
-        menu.addWidget("menuLabel", Label(self.window.gui, text = "Searching Menu"),
+        
+        menu.addWidget("menuLabel", Label(self.window.gui, text = "WELCOME", font = font.Font(size = 20)),
         Position(0.5, 0.05, Position.MODE_RELATIVE, CENTER))
-
-        menu.addWidget("searchFrame", LabelFrame(self.window.gui, text = "Search Options", height = 400, width = 300), 
+        
+        # FRAMES
+        menu.addWidget("searchFrame", LabelFrame(self.window.gui, text = "Search Options", height = 400, width = 400, relief = "sunken", labelanchor = N, font = font.Font(size = 16)), 
         Position(0.05, 0.12, Position.MODE_RELATIVE, NW))
+        menu.addWidget("resultsFrame", LabelFrame(self.window.gui, text = "Results", height = 400, width = 400, relief = "sunken", labelanchor = N, font = font.Font(size = 16)), 
+        Position(0.95, 0.12, Position.MODE_RELATIVE, NE))
 
-        menu.addWidget("goBack", Button(self.window.gui, text = "Go Back", command = lambda : self.window.changeMenu(MainMenuFactory(self.window).makeMenu(), False)), 
-        Position(0.5, 0.9, Position.MODE_RELATIVE, CENTER))
+        menu.addWidget("resultList", Listbox(menu.widgets["resultsFrame"][0], height = 25, width = 50), 
+        Position(0.5, 0.45, Position.MODE_RELATIVE, CENTER))
 
         menu.addWidget("entry", Entry(menu.widgets["searchFrame"][0]), 
         Position(0.5, 0.15, Position.MODE_RELATIVE, CENTER))
 
-        menu.addWidget("entryLabel", Label(menu.widgets["searchFrame"][0], text = "Insert theme"), 
+        menu.addWidget("entryLabel", Label(menu.widgets["searchFrame"][0], text = "Insert theme", font = font.Font(size = 12)), 
         Position(0.5, 0.1, Position.MODE_RELATIVE, CENTER))
 
-        menu.addWidget("resultsLabel", Label(self.window.gui, text = "Results"), 
-        Position(0.75, 0.2, Position.MODE_RELATIVE, CENTER))
+        menu.addWidget("themeListLabel", Label(menu.widgets["searchFrame"][0], text = "Selected themes", font = font.Font(size = 12)), 
+        Position(0.5, 0.3, Position.MODE_RELATIVE, CENTER))
+
+        menu.addWidget("canvas", Canvas(menu.widgets["searchFrame"][0], height = 10, width = 10, bg = "grey"),
+        Position(0.5, 0.5, Position.MODE_RELATIVE, N))
+
+        for i in range (100):
+            menu.widgets["resultList"][0].insert(i,"Hello")
+
+        menu.addWidget("lookupButton", Button(menu.widgets["resultsFrame"][0], text = "Look up"),
+        Position(0.3, 0.925, Position.MODE_RELATIVE, CENTER))
+
+        menu.addWidget("deleteButton", Button(menu.widgets["resultsFrame"][0], text = "Delete"),
+        Position(0.7, 0.925, Position.MODE_RELATIVE, CENTER))
+            
+        
         return menu
 
 class DeleteMenuFactory(MenuFactory):

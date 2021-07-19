@@ -10,7 +10,7 @@ def main():
     gui = tk.Tk()
     gui.geometry("1000x600")
     window = Window(gui)
-    window.changeMenu(MainMenuFactory(window).makeMenu(), True)
+    window.changeMenu(SearchMenuFactory(window).makeMenu(), True)
     window.run()
 
 if __name__ == "__main__":
