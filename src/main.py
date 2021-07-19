@@ -9,8 +9,9 @@ import tkinter as tk
 def main():
     gui = tk.Tk()
     gui.geometry("1000x600")
+    gui.title("Problem Sorter")
     window = Window(gui)
-    window.changeMenu(SearchMenuFactory(window).makeMenu(), True)
+    window.changeMenu(MainMenuFactory(window).makeMenu(), True)
     window.run()
 
 if __name__ == "__main__":
