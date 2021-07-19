@@ -1,8 +1,12 @@
+import tkinter as tk
 
-class Window:
 
-    def __init__(self, gui):
-        self.gui = gui
+class Application:
+
+    def __init__(self):
+        self.gui = tk.Tk()
+        self.gui.geometry("1000x600")
+        self.gui.title("Problem Sorter")
 
     @property
     def gui(self):

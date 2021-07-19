@@ -1,18 +1,15 @@
-from gui_window import Window
-from gui_menu import Menu
-from menu_factory import *
-import tkinter as tk
+from gui_app import Application
+from gui_menu import *
+
 # from db_inter import *
 
 
 
 def main():
-    gui = tk.Tk()
-    gui.geometry("1000x600")
-    gui.title("Problem Sorter")
-    window = Window(gui)
-    window.changeMenu(MainMenuFactory(window).makeMenu(), True)
-    window.run()
+
+    app = Application()
+    app.changeMenu(MainMenu(app), True)
+    app.run()
 
 if __name__ == "__main__":
     main()
