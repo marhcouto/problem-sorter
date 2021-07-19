@@ -1,10 +1,13 @@
+import tkinter as tk
+
 class Position:
 
     MODE_RELATIVE = "relative"
     MODE_ABSOLUTE = "absolute"
 
-    def __init__(self, x, y, mode):
+    def __init__(self, x, y, mode, anchor):
         self.mode = mode
+        self.anchor = anchor
         self.x = x
         self.y = y
 
@@ -37,3 +40,11 @@ class Position:
     @mode.setter
     def mode(self, newMode):
         self.__mode = newMode if newMode == Position.MODE_RELATIVE or newMode == Position.MODE_ABSOLUTE else Position.MODE_RELATIVE
+
+    @property
+    def anchor(self):
+        return self.__anchor
+    
+    @anchor.setter
+    def anchor(self, newAnchor):
+        self.__anchor = newAnchor if newAnchor in [tk.CENTER, tk.NE, tk.SE, tk.NW, tk.SW, tk.S, tk.N, tk.E, tk.W] else tk.CENTER

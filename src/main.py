@@ -8,7 +8,7 @@ import tkinter as tk
 
 def main():
     gui = tk.Tk()
-    gui.geometry("500x200")
+    gui.geometry("1000x600")
     window = Window(gui)
     window.changeMenu(MainMenuFactory(window).makeMenu(), True)
     window.run()
