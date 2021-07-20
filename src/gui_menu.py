@@ -86,32 +86,62 @@ class SearchMenu(GUIMenu):
         Position(0.5, 0.85, Position.MODE_RELATIVE, S))
 
         # TODO
-        self.widgets["resultList"][0].insert(0,"/home/marhcouto/Documents/BDProblemas/README.md")
+        self.widgets["resultList"][0].insert(0,"README.md")
 
         # BUTTONS
-        self.addWidget("lookupButton", Button(self.widgets["resultsFrame"][0], text = "Look up",
+        self.addWidget("lookupButton", Button(self.widgets["resultsFrame"][0], text = "Look up", 
         command =  self.lookupCommand),
         Position(0.3, 0.925, Position.MODE_RELATIVE, CENTER))
 
-        self.addWidget("deleteButton", Button(self.widgets["resultsFrame"][0], text = "Delete"),
+        self.addWidget("deleteButton", Button(self.widgets["resultsFrame"][0], text = "Delete",
+        command = self.deleteCommand),
         Position(0.7, 0.925, Position.MODE_RELATIVE, CENTER))
 
-        self.addWidget("removeButton", Button(self.widgets["searchFrame"][0], text = "Remove", 
+        self.addWidget("removeButton", Button(self.widgets["searchFrame"][0], text = "Remove theme", 
         command = lambda : self.widgets["themeList"][0].delete(self.widgets["themeList"][0].curselection()[0]) if 0 < len(self.widgets["themeList"][0].curselection()) else "banana"),
         Position(0.7, 0.925, Position.MODE_RELATIVE, CENTER))
 
-        self.addWidget("addButton", Button(self.widgets["searchFrame"][0], text = "Add", 
-        command = lambda : self.widgets["themeList"][0].insert(0, self.widgets["entry"][0].get())),
+        self.addWidget("addButton", Button(self.widgets["searchFrame"][0], text = "Add theme", 
+        command = lambda : self.widgets["themeList"][0].insert(0, self.widgets["entry"][0].get() if len(self.widgets["entry"][0].get()) > 0 else "bananas")),
         Position(0.3, 0.925, Position.MODE_RELATIVE, CENTER))
             
         self.addWidget("goBack", Button(self.app.gui, text = "Go Back", 
         command = lambda : self.app.changeMenu(MainMenu(self.app), False)), 
+        Position(0.2, 0.9, Position.MODE_RELATIVE, CENTER))
+
+        self.addWidget("search", Button(self.app.gui, text = "Search Files",
+        command = self.searchCommand),
         Position(0.5, 0.9, Position.MODE_RELATIVE, CENTER))
 
     def lookupCommand(self):
+        
+        if len(self.widgets["resultList"][0].curselection()) <= 0:
+            print("TODO")
+            return
+
         fileName = self.widgets["resultList"][0].get(0, END)[self.widgets["resultList"][0].curselection()[0]]
         if len(self.widgets["resultList"][0].curselection()) > 0:
             os_tinkering.getFile(fileName)
+
+    def searchCommand(self):
+
+        themeList = self.widgets["themeList"][0].get(0, END)
+        if len(themeList) <= 0:
+            print("TODO")
+            return
+
+        list1 = []
+        query = "SELECT Problem.location FROM Problem JOIN ProblemTheme JOIN Theme ON Theme.id = ProblemTheme.themeID AND Problem.id = ProblemTheme.problemId AND Theme.name = '{theme}'"
+        
+        for theme in themeList:
+            for path in self.app.db.execute(query.format(theme = theme)):
+                list1.append(path)
+
+        for theme in list1:
+            self.widgets["resultList"][0].insert(0, theme)
+
+    def deleteCommand(self):
+        "bananas"
 
 
 class InfoMenu(GUIMenu):
@@ -124,12 +154,13 @@ class InfoMenu(GUIMenu):
         Position(0.5, 0.1, Position.MODE_RELATIVE, CENTER))
         self.addWidget("message", Message(self.app.gui, text = " - In the search menu, you can search for exercises/exams containing exercises that associate with the themes you chose,\n" +
                                                                     "followed by lookup of the file or elimination of its registry.\n\n"+
-                                                                    " - In the insertion menu, you can insert new entries in the database, filling in the fields with the corresponding info.", 
+                                                                    " - In the insertion menu, you can insert new entries in the database, filling in the fields with the corresponding info.\n" + 
+                                                                    "For one file, multiple themes can be inserted.", 
                                                                     font = font.Font(family = "Arial", size = 14)),
         Position(0.1, 0.2, Position.MODE_RELATIVE, NW))
         self.addWidget("goBack", Button(self.app.gui, text = "Go Back", 
         command = lambda : self.app.changeMenu(MainMenu(self.app), False)), 
-        Position(0.5, 0.9, Position.MODE_RELATIVE, CENTER))
+        Position(0.2, 0.9, Position.MODE_RELATIVE, CENTER))
 
 
 class InsertMenu(GUIMenu):
@@ -148,6 +179,12 @@ class InsertMenu(GUIMenu):
         Position(0.3, 0.25, Position.MODE_RELATIVE, CENTER))
         self.addWidget("pathLabel", Label(self.app.gui, text = "Document's path", font = font.Font(size = 12)),
         Position(0.7, 0.25, Position.MODE_RELATIVE, CENTER))
+        self.addWidget("listLabel", Label(self.app.gui, text = "Themes selected", font = font.Font(size = 12)),
+        Position(0.5, 0.4, Position.MODE_RELATIVE, CENTER))
+
+        # LIST
+        self.addWidget("themeList", Listbox(self.app.gui, height = 16, width = 50), 
+        Position(0.5, 0.75, Position.MODE_RELATIVE, S))
 
         # ENTRIES
         self.addWidget("themeEntry", Entry(self.app.gui),
@@ -158,14 +195,21 @@ class InsertMenu(GUIMenu):
         # BUTTONS
         self.addWidget("goBack", Button(self.app.gui, text = "Go Back",
         command = lambda : self.app.changeMenu(MainMenu(self.app), False)), 
-        Position(0.5, 0.9, Position.MODE_RELATIVE, CENTER))
+        Position(0.2, 0.9, Position.MODE_RELATIVE, CENTER))
 
         self.addWidget("submit", Button(self.app.gui, text = "Submit",
         command = self.submitionCommand),
-        Position(0.5, 0.5, Position.MODE_RELATIVE, CENTER))
+        Position(0.8, 0.9, Position.MODE_RELATIVE, CENTER))
+
+        self.addWidget("addButton", Button(self.app.gui, text = "Add theme",
+        command = lambda : self.widgets["themeList"][0].insert(0, self.widgets["themeEntry"][0].get())),
+        Position(0.4, 0.8, Position.MODE_RELATIVE, CENTER))
+
+        self.addWidget("removeButton", Button(self.app.gui, text = "Remove theme", 
+        command = lambda : self.widgets["themeList"][0].delete(self.widgets["themeList"][0].curselection()[0]) if 0 < len(self.widgets["themeList"][0].curselection()) else "banana"),
+        Position(0.6, 0.8, Position.MODE_RELATIVE, CENTER))
     
     def submitionCommand(self):
         "does bananas"
         # TODO
-
 

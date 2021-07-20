@@ -7,7 +7,7 @@ cursor.execute("PRAGMA foreign_keys = on")
 for row in cursor.execute("SELECT * FROM Problem;"):
     print(row)
 
-"""
+
 print(list(cursor.execute("SELECT * FROM Problem;")))
 
 
@@ -20,5 +20,3 @@ else:
 finally:
     print("I HAPPEN ANYWAY")
 
-
-"""

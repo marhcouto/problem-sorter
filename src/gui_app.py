@@ -3,10 +3,11 @@ import tkinter as tk
 
 class Application:
 
-    def __init__(self):
+    def __init__(self, db):
         self.gui = tk.Tk()
         self.gui.geometry("1000x600")
         self.gui.title("Problem Sorter")
+        self.db = db
 
     @property
     def gui(self):
@@ -24,3 +25,6 @@ class Application:
 
     def run(self):
         self.gui.mainloop()
+
+
+

@@ -1,13 +1,12 @@
 from gui_app import Application
 from gui_menu import *
-
-# from db_inter import *
+from db_handling import Database
 
 
 
 def main():
 
-    app = Application()
+    app = Application(Database("problems.db"))
     app.changeMenu(MainMenu(app), True)
     app.run()
 
