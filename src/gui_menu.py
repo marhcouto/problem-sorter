@@ -120,28 +120,45 @@ class SearchMenu(GUIMenu):
             return
 
         fileName = self.widgets["resultList"][0].get(0, END)[self.widgets["resultList"][0].curselection()[0]]
-        if len(self.widgets["resultList"][0].curselection()) > 0:
-            os_tinkering.getFile(fileName)
+        print(fileName)
+        os_tinkering.getFile(fileName)
 
     def searchCommand(self):
 
-        themeList = self.widgets["themeList"][0].get(0, END)
-        if len(themeList) <= 0:
+        themeList = self.widgets["themeList"][0]
+        resultList = self.widgets["resultList"][0]
+
+        if len(themeList.get(0, END)) <= 0:
             print("TODO")
             return
 
         list1 = []
         query = "SELECT Problem.location FROM Problem JOIN ProblemTheme JOIN Theme ON Theme.id = ProblemTheme.themeID AND Problem.id = ProblemTheme.problemId AND Theme.name = '{theme}'"
         
-        for theme in themeList:
+
+        for theme in themeList.get(0, END):
             for path in self.app.db.execute(query.format(theme = theme)):
                 list1.append(path)
 
-        for theme in list1:
-            self.widgets["resultList"][0].insert(0, theme)
+        resultList.delete(0, END)
+
+        for path in list1:
+            resultList.insert(0, path[0])
 
     def deleteCommand(self):
-        "bananas"
+
+        if len(self.widgets["resultList"][0].curselection()) <= 0:
+            print("TODO")
+            return
+
+        fileName = self.widgets["resultList"][0].get(0, END)[self.widgets["resultList"][0].curselection()[0]]
+        query = "DELETE FROM ProblemTheme WHERE ProblemTheme.problemId = (SELECT id FROM Problem WHERE location = '{filename}');"
+
+        result = self.app.db.execute(query.format(filename = fileName))
+        print(result)
+
+        self.searchCommand()
+        
 
 
 class InfoMenu(GUIMenu):
@@ -152,10 +169,11 @@ class InfoMenu(GUIMenu):
     def makeMenu(self):
         self.addWidget("menuLabel", Label(self.app.gui, text = "Instructions", font = font.Font(size = 20)),
         Position(0.5, 0.1, Position.MODE_RELATIVE, CENTER))
-        self.addWidget("message", Message(self.app.gui, text = " - In the search menu, you can search for exercises/exams containing exercises that associate with the themes you chose,\n" +
+        self.addWidget("message", Message(self.app.gui, width = 800, text = " - In the search menu, you can search for exercises/exams containing exercises that associate with the themes you chose,\n" +
                                                                     "followed by lookup of the file or elimination of its registry.\n\n"+
                                                                     " - In the insertion menu, you can insert new entries in the database, filling in the fields with the corresponding info.\n" + 
-                                                                    "For one file, multiple themes can be inserted.", 
+                                                                    "For one file, multiple themes can be inserted.\n\n" + 
+                                                                    " - For searches, the themes selected affect the search as a reunion of results.", 
                                                                     font = font.Font(family = "Arial", size = 14)),
         Position(0.1, 0.2, Position.MODE_RELATIVE, NW))
         self.addWidget("goBack", Button(self.app.gui, text = "Go Back", 

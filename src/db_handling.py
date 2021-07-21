@@ -18,7 +18,6 @@ class Database:
             print(inst)
             return []
         else:
-            print(result)
             return result
 
 """
