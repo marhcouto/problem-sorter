@@ -13,8 +13,7 @@ class Database:
         try:
             result = list(self.cursor.execute(string))
         except Exception as inst:
-            print(type(inst))    
-            print(inst.args)     
+            print(type(inst))     
             print(inst)
             return []
         else:
