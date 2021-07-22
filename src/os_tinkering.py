@@ -5,7 +5,11 @@ import getpass
 
 
 
-def getFile(fileName):
+def getFile(fileName, viewerName):
+
+    print(fileName, viewerName)
+
+
     if platform.system() == "Windows":
         print("windows")
     elif platform.system() == "Linux":

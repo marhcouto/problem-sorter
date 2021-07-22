@@ -1,6 +1,9 @@
+from tkinter import CENTER, Button, Entry, Label, LabelFrame, Listbox, font, S, N, NE, NW, END, Message, Tk
+
 from position import Position
-from tkinter import CENTER, Button, Entry, Label, LabelFrame, Listbox, font, S, N, NE, NW, END, Message, Canvas
 import os_tinkering
+from PIL import Image, ImageTk
+
 
 
 
@@ -50,8 +53,12 @@ class MainMenu(GUIMenu):
         self.addWidget("menuLabel", Label(self.app.gui, text = "Welcome to Problem Sorter", font = font.Font(size = 30)),
         Position(0.5, 0.1, Position.MODE_RELATIVE, CENTER))
 
-        # self.addWidget("canvas", Canvas())
+        #self.image = ImageTk.PhotoImage(Image.open("img/images.png"))
 
+        #self.addWidget("imageLabel", Label(image = self.image),
+        #Position(0.5, 0.5, Position.MODE_RELATIVE, CENTER))
+
+      
 
 class SearchMenu(GUIMenu):
 
@@ -61,23 +68,23 @@ class SearchMenu(GUIMenu):
     def makeMenu(self):
         
         # TITLE
-        self.addWidget("menuLabel", Label(self.app.gui, text = "Search or Delete", font = font.Font(size = 20)),
+        self.addWidget("menuLabel", Label(self.app.gui, text = "Search or Delete", font = font.Font(size = 26)),
         Position(0.5, 0.1, Position.MODE_RELATIVE, CENTER))
         
         # FRAMES
-        self.addWidget("searchFrame", LabelFrame(self.app.gui, text = "Search Options", height = 400, width = 400, relief = "sunken", labelanchor = N, font = font.Font(size = 16)), 
+        self.addWidget("searchFrame", LabelFrame(self.app.gui, text = "Search Options", height = 400, width = 400, relief = "sunken", labelanchor = N, font = font.Font(size = 18)), 
         Position(0.05, 0.15, Position.MODE_RELATIVE, NW))
-        self.addWidget("resultsFrame", LabelFrame(self.app.gui, text = "Results", height = 400, width = 400, relief = "sunken", labelanchor = N, font = font.Font(size = 16)), 
+        self.addWidget("resultsFrame", LabelFrame(self.app.gui, text = "Results", height = 400, width = 400, relief = "sunken", labelanchor = N, font = font.Font(size = 18)), 
         Position(0.95, 0.15, Position.MODE_RELATIVE, NE))
 
         # LEFTSIDE
-        self.addWidget("entry", Entry(self.widgets["searchFrame"][0]), 
+        self.addWidget("entry", Entry(self.widgets["searchFrame"][0], relief = "flat"), 
         Position(0.5, 0.15, Position.MODE_RELATIVE, CENTER))
 
-        self.addWidget("entryLabel", Label(self.widgets["searchFrame"][0], text = "Insert theme", font = font.Font(size = 12)), 
+        self.addWidget("entryLabel", Label(self.widgets["searchFrame"][0], text = "Insert theme", font = font.Font(size = 12, weight = "bold")), 
         Position(0.5, 0.1, Position.MODE_RELATIVE, CENTER))
 
-        self.addWidget("themeListLabel", Label(self.widgets["searchFrame"][0], text = "Selected themes", font = font.Font(size = 12)), 
+        self.addWidget("themeListLabel", Label(self.widgets["searchFrame"][0], text = "Selected themes", font = font.Font(size = 12, weight = "bold")), 
         Position(0.5, 0.29, Position.MODE_RELATIVE, CENTER))
 
         self.addWidget("themeList", Listbox(self.widgets["searchFrame"][0], height = 16, width = 50), 
@@ -87,10 +94,10 @@ class SearchMenu(GUIMenu):
         self.addWidget("resultList", Listbox(self.widgets["resultsFrame"][0], height = 16, width = 50), 
         Position(0.5, 0.85, Position.MODE_RELATIVE, S))
 
-        self.addWidget("resultListLabel", Label(self.widgets["resultsFrame"][0], text = "Files", font = font.Font(size = 12)),
+        self.addWidget("resultListLabel", Label(self.widgets["resultsFrame"][0], text = "Files", font = font.Font(size = 12, weight = "bold")),
         Position(0.5, 0.29, Position.MODE_RELATIVE, CENTER))
 
-        self.addWidget("messageLabel", Label(self.widgets["resultsFrame"][0], text = "Messages", font = font.Font(size = 12)), 
+        self.addWidget("messageLabel", Label(self.widgets["resultsFrame"][0], text = "Messages", font = font.Font(size = 12, weight = "bold")), 
         Position(0.5, 0.1, Position.MODE_RELATIVE, CENTER))
 
         self.addWidget("message", Message(self.widgets["resultsFrame"][0], text = "Awaiting actions", width = 200),
@@ -122,14 +129,28 @@ class SearchMenu(GUIMenu):
         Position(0.5, 0.9, Position.MODE_RELATIVE, CENTER))
 
     def lookupCommand(self):
-        
+
         if len(self.widgets["resultList"][0].curselection()) <= 0:
-            self.widgets["message"].configure(text = "No files selected. Please select a file")
+            self.widgets["message"][0].configure(text = "No files selected. Please select a file")
             return
 
+        newWindow = Tk()
+        newWindow.geometry("400x200")
+        newWindow.title("Choose viewer app")
+
+        okButton = Button(newWindow, text = "OK", command = lambda : [(lambda : os_tinkering.getFile(fileName, newList.get(0, END)[newList.curselection()[0]]))(), (lambda : newWindow.destroy())()])
+        newList = Listbox(newWindow, width = 20, height = 9)
+        newLabel = Label(newWindow, text = "Choose a program to visualize the file", font = font.Font(size = 12))
+
+        newList.insert(0, "Word")
+        newList.insert(0, "LibreOffice")
+        
+        newList.place(relx = 0.5, rely = 0.8, anchor = S)
+        newLabel.place(relx = 0.5, rely = 0.1, anchor = CENTER)
+        okButton.place(relx = 0.5, rely = 0.9, anchor = CENTER)
+
         fileName = self.widgets["resultList"][0].get(0, END)[self.widgets["resultList"][0].curselection()[0]]
-        print(fileName)
-        os_tinkering.getFile(fileName)
+    
 
     def searchCommand(self):
 
@@ -137,7 +158,7 @@ class SearchMenu(GUIMenu):
         resultList = self.widgets["resultList"][0]
 
         if len(themeList.get(0, END)) <= 0:
-            self.widgets["message"].configure(text = "No themes selected. Please, add a theme to the theme list")
+            self.widgets["message"][0].configure(text = "No themes selected. Please, add a theme to the theme list")
             return
 
         list1 = []
@@ -155,7 +176,7 @@ class SearchMenu(GUIMenu):
     def deleteCommand(self):
 
         if len(self.widgets["resultList"][0].curselection()) <= 0:
-            self.widgets["message"].configure(text = "No files selected. Please select a file")
+            self.widgets["message"][0].configure(text = "No files selected. Please select a file")
             return
 
         fileName = self.widgets["resultList"][0].get(0, END)[self.widgets["resultList"][0].curselection()[0]]
@@ -174,7 +195,7 @@ class InfoMenu(GUIMenu):
         super().__init__(app)
 
     def makeMenu(self):
-        self.addWidget("menuLabel", Label(self.app.gui, text = "Instructions", font = font.Font(size = 20)),
+        self.addWidget("menuLabel", Label(self.app.gui, text = "Instructions", font = font.Font(size = 26)),
         Position(0.5, 0.1, Position.MODE_RELATIVE, CENTER))
         self.addWidget("message", Message(self.app.gui, width = 800, text = " - In the search menu, you can search for exercises/exams containing exercises that associate with the themes you chose," +
                                                                     "followed by lookup of the file or elimination of its registry.\n\n"+
@@ -198,17 +219,17 @@ class InsertMenu(GUIMenu):
     def makeMenu(self):
 
         # TITLE
-        self.addWidget("menuLabel", Label(self.app.gui, text = "Inserting Menu", font = font.Font(family = 'Helvetica', size = 20)),
+        self.addWidget("menuLabel", Label(self.app.gui, text = "Inserting Menu", font = font.Font(size = 26)),
         Position(0.5, 0.1, Position.MODE_RELATIVE, CENTER))
 
         # LABELS
-        self.addWidget("themeLabel", Label(self.app.gui, text = "Theme", font = font.Font(size = 12)),
+        self.addWidget("themeLabel", Label(self.app.gui, text = "Theme", font = font.Font(size = 12, weight = "bold")),
         Position(0.3, 0.2, Position.MODE_RELATIVE, CENTER))
-        self.addWidget("pathLabel", Label(self.app.gui, text = "Document's path", font = font.Font(size = 12)),
+        self.addWidget("pathLabel", Label(self.app.gui, text = "Document's path", font = font.Font(size = 12, weight = "bold")),
         Position(0.7, 0.2, Position.MODE_RELATIVE, CENTER))
-        self.addWidget("listLabel", Label(self.app.gui, text = "Themes selected", font = font.Font(size = 12)),
+        self.addWidget("listLabel", Label(self.app.gui, text = "Themes selected", font = font.Font(size = 12, weight = "bold")),
         Position(0.5, 0.35, Position.MODE_RELATIVE, CENTER))
-        self.addWidget("messageLabel", Label(self.app.gui, text = "Messages", font = font.Font(size = 12)),
+        self.addWidget("messageLabel", Label(self.app.gui, text = "Messages", font = font.Font(size = 12, weight = "bold")),
         Position(0.75, 0.35, Position.MODE_RELATIVE, CENTER))
 
         # LIST
@@ -216,9 +237,9 @@ class InsertMenu(GUIMenu):
         Position(0.5, 0.7, Position.MODE_RELATIVE, S))
 
         # ENTRIES
-        self.addWidget("themeEntry", Entry(self.app.gui),
+        self.addWidget("themeEntry", Entry(self.app.gui, relief = "flat"),
         Position(0.3, 0.25, Position.MODE_RELATIVE, CENTER))
-        self.addWidget("pathEntry", Entry(self.app.gui),
+        self.addWidget("pathEntry", Entry(self.app.gui, relief = "flat"),
         Position(0.7, 0.25, Position.MODE_RELATIVE, CENTER))
 
         # MESSAGE
@@ -247,7 +268,7 @@ class InsertMenu(GUIMenu):
         themeList = self.widgets["themeList"][0]
 
         if len(themeList.get(0, END)) <= 0:
-            self.widgets["message"].configure(text = "No themes selected. Please, add a theme to the theme list")
+            self.widgets["message"][0].configure(text = "No themes selected. Please, add a theme to the theme list")
             return
 
         print("BEFORE:\n", self.app.db.execute("SELECT * FROM ProblemTheme;"))
