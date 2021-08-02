@@ -21,8 +21,3 @@ class Database:
             self.connection.commit()
             return result
 
-"""
-database = Database("problems.db")
-
-database.execute("SELECT * FROM Problem;")
-"""

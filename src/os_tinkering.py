@@ -28,7 +28,5 @@ def getFile(fileName, viewerName):
         else:
             print("Invalid viewer app")
 
-        os.system("{")
-        print("penguins")
     elif platform.system() == "Darwin":
         print("apples")

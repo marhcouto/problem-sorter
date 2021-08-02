@@ -53,10 +53,10 @@ class MainMenu(GUIMenu):
         self.addWidget("menuLabel", Label(self.app.gui, text = "Welcome to Problem Sorter", font = font.Font(size = 30)),
         Position(0.5, 0.1, Position.MODE_RELATIVE, CENTER))
 
-        #self.image = ImageTk.PhotoImage(Image.open("img/images.png"))
+        self.image = ImageTk.PhotoImage(Image.open("img/theme.png"))
 
-        #self.addWidget("imageLabel", Label(image = self.image),
-        #Position(0.5, 0.5, Position.MODE_RELATIVE, CENTER))
+        self.addWidget("imageLabel", Label(image = self.image),
+        Position(0.5, 0.5, Position.MODE_RELATIVE, CENTER))
 
       
 
@@ -78,17 +78,13 @@ class SearchMenu(GUIMenu):
         Position(0.95, 0.15, Position.MODE_RELATIVE, NE))
 
         # LEFTSIDE
-        self.addWidget("entry", Entry(self.widgets["searchFrame"][0], relief = "flat"), 
-        Position(0.5, 0.15, Position.MODE_RELATIVE, CENTER))
-
-        self.addWidget("entryLabel", Label(self.widgets["searchFrame"][0], text = "Insert theme", font = font.Font(size = 12, weight = "bold")), 
-        Position(0.5, 0.1, Position.MODE_RELATIVE, CENTER))
-
-        self.addWidget("themeListLabel", Label(self.widgets["searchFrame"][0], text = "Selected themes", font = font.Font(size = 12, weight = "bold")), 
+        self.addWidget("themeListLabel", Label(self.widgets["searchFrame"][0], text = "Themes", font = font.Font(size = 12, weight = "bold")), 
         Position(0.5, 0.29, Position.MODE_RELATIVE, CENTER))
 
-        self.addWidget("themeList", Listbox(self.widgets["searchFrame"][0], height = 16, width = 50), 
+        self.addWidget("themeList", Listbox(self.widgets["searchFrame"][0], height = 16, width = 50, selectmode = "multiple"), 
         Position(0.5, 0.85, Position.MODE_RELATIVE, S))
+
+        self.initializeThemeList()
 
         # RIGHTSIDE
         self.addWidget("resultList", Listbox(self.widgets["resultsFrame"][0], height = 16, width = 50), 
@@ -111,15 +107,7 @@ class SearchMenu(GUIMenu):
         self.addWidget("deleteButton", Button(self.widgets["resultsFrame"][0], text = "Delete",
         command = self.deleteCommand),
         Position(0.7, 0.925, Position.MODE_RELATIVE, CENTER))
-
-        self.addWidget("removeButton", Button(self.widgets["searchFrame"][0], text = "Remove theme", 
-        command = lambda : self.widgets["themeList"][0].delete(self.widgets["themeList"][0].curselection()[0]) if 0 < len(self.widgets["themeList"][0].curselection()) else "banana"),
-        Position(0.7, 0.925, Position.MODE_RELATIVE, CENTER))
-
-        self.addWidget("addButton", Button(self.widgets["searchFrame"][0], text = "Add theme", 
-        command = lambda : self.widgets["themeList"][0].insert(0, self.widgets["entry"][0].get() if len(self.widgets["entry"][0].get()) > 0 else "bananas")),
-        Position(0.3, 0.925, Position.MODE_RELATIVE, CENTER))
-            
+ 
         self.addWidget("goBack", Button(self.app.gui, text = "Go Back", 
         command = lambda : self.app.changeMenu(MainMenu(self.app), False)), 
         Position(0.2, 0.9, Position.MODE_RELATIVE, CENTER))
@@ -127,6 +115,26 @@ class SearchMenu(GUIMenu):
         self.addWidget("search", Button(self.app.gui, text = "Search Files",
         command = self.searchCommand),
         Position(0.5, 0.9, Position.MODE_RELATIVE, CENTER))
+
+
+    def initializeThemeList(self):
+
+        self.refreshThemes()
+
+        getThemesQuery = "SELECT name FROM Theme;"
+        themeList = self.widgets["themeList"][0]
+
+        themeList.delete(0, END)
+
+        for line in self.app.db.execute(getThemesQuery):
+            themeList.insert(0, line[0])
+
+
+    def refreshThemes(self):
+
+        eliminateThemesQuery = "DELETE FROM Theme WHERE NOT EXISTS (SELECT * FROM ProblemTheme WHERE themeId = Theme.id);"
+        self.app.db.execute(eliminateThemesQuery)
+
 
     def lookupCommand(self):
 
@@ -158,21 +166,22 @@ class SearchMenu(GUIMenu):
         resultList = self.widgets["resultList"][0]
         list1 = []
 
-        if len(themeList.get(0, END)) <= 0:
+        if len(themeList.curselection()) <= 0:
             query = "SELECT location FROM Problem;"
             for path in self.app.db.execute(query):
                 list1.append(path[0])
         else:
             query = "SELECT Problem.location FROM Problem JOIN ProblemTheme JOIN Theme ON Theme.id = ProblemTheme.themeID AND Problem.id = ProblemTheme.problemId AND Theme.name = '{theme}'"
-            for theme in themeList.get(0, END):
+            for i in themeList.curselection():
+                theme = themeList.get(0, END)[i]
                 for path in self.app.db.execute(query.format(theme = theme)):
-                    print(path)
                     list1.append(path[0])
 
         resultList.delete(0, END)
 
         for path in list1:
             resultList.insert(0, path)
+
 
     def deleteCommand(self):
 
@@ -181,6 +190,7 @@ class SearchMenu(GUIMenu):
             return
 
         fileName = self.widgets["resultList"][0].get(0, END)[self.widgets["resultList"][0].curselection()[0]]
+
         query1 = "DELETE FROM ProblemTheme WHERE ProblemTheme.problemId = (SELECT id FROM Problem WHERE location = '{filename}');"
         query2 = "DELETE FROM Problem WHERE location = '{filename}';"
 
@@ -189,6 +199,7 @@ class SearchMenu(GUIMenu):
         self.widgets["message"][0].configure(text = "{file} was successfully removed from the database".format(file = fileName))
 
         self.searchCommand()
+        self.initializeThemeList()
     
 
 
@@ -201,10 +212,11 @@ class InfoMenu(GUIMenu):
         self.addWidget("menuLabel", Label(self.app.gui, text = "Instructions", font = font.Font(size = 26)),
         Position(0.5, 0.1, Position.MODE_RELATIVE, CENTER))
         self.addWidget("message", Message(self.app.gui, width = 800, text = " - In the search menu, you can search for exercises/exams containing exercises that associate with the themes you chose," +
-                                                                    "followed by lookup of the file or elimination of its registry.\n\n"+
+                                                                    "followed by lookup of the file or elimination of its registry.\n\n" +
+                                                                    " - When multiple themes are selected, the files presented are the ones which associate with at least one of the themes.\n\n" + 
                                                                     " - In the insertion menu, you can insert new entries in the database, filling in the fields with the corresponding info." + 
                                                                     "For one file, multiple themes can be inserted.\n\n" + 
-                                                                    " - For searches, the themes selected affect the search as a reunion of results.\n\n" +
+                                                                    " - When a theme no longer has files associated to it, it will be automatically eliminated.\n\n" +
                                                                     " - For insertions, if new files are selected, they will be inserted; if the chosen file already exists, its themes will be updated," + 
                                                                     " same goes for themes.", 
                                                                     font = font.Font(family = "Arial", size = 14)),
@@ -274,10 +286,6 @@ class InsertMenu(GUIMenu):
             self.widgets["message"][0].configure(text = "No themes selected. Please, add a theme to the theme list")
             return
 
-        print("BEFORE:\n", self.app.db.execute("SELECT * FROM ProblemTheme;"))
-        print("BEFORE:\n", self.app.db.execute("SELECT * FROM Problem;"))
-        print("BEFORE:\n", self.app.db.execute("SELECT * FROM Theme;"))
-
         path = self.widgets["pathEntry"][0].get()
         insertProblem = "INSERT INTO Problem (location) VALUES('{path}');".format(path = path)
         insertThemes = "INSERT INTO Theme (name) VALUES('{theme}');"
@@ -299,9 +307,6 @@ class InsertMenu(GUIMenu):
         for i in themeIds:
             self.app.db.execute(insertPT.format(idT = i, idP = problemId))
 
-        print("AFTER:\n", self.app.db.execute("SELECT * FROM ProblemTheme;"))
-        print("AFTER:\n", self.app.db.execute("SELECT * FROM Problem;"))
-        print("AFTER:\n", self.app.db.execute("SELECT * FROM Theme;"))
 
 
 
