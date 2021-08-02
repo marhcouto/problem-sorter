@@ -156,22 +156,23 @@ class SearchMenu(GUIMenu):
 
         themeList = self.widgets["themeList"][0]
         resultList = self.widgets["resultList"][0]
+        list1 = []
 
         if len(themeList.get(0, END)) <= 0:
-            self.widgets["message"][0].configure(text = "No themes selected. Please, add a theme to the theme list")
-            return
-
-        list1 = []
-        query = "SELECT Problem.location FROM Problem JOIN ProblemTheme JOIN Theme ON Theme.id = ProblemTheme.themeID AND Problem.id = ProblemTheme.problemId AND Theme.name = '{theme}'"
-        
-        for theme in themeList.get(0, END):
-            for path in self.app.db.execute(query.format(theme = theme)):
-                list1.append(path)
+            query = "SELECT location FROM Problem;"
+            for path in self.app.db.execute(query):
+                list1.append(path[0])
+        else:
+            query = "SELECT Problem.location FROM Problem JOIN ProblemTheme JOIN Theme ON Theme.id = ProblemTheme.themeID AND Problem.id = ProblemTheme.problemId AND Theme.name = '{theme}'"
+            for theme in themeList.get(0, END):
+                for path in self.app.db.execute(query.format(theme = theme)):
+                    print(path)
+                    list1.append(path[0])
 
         resultList.delete(0, END)
 
         for path in list1:
-            resultList.insert(0, path[0])
+            resultList.insert(0, path)
 
     def deleteCommand(self):
 
@@ -180,13 +181,15 @@ class SearchMenu(GUIMenu):
             return
 
         fileName = self.widgets["resultList"][0].get(0, END)[self.widgets["resultList"][0].curselection()[0]]
-        query = "DELETE FROM ProblemTheme WHERE ProblemTheme.problemId = (SELECT id FROM Problem WHERE location = '{filename}');"
+        query1 = "DELETE FROM ProblemTheme WHERE ProblemTheme.problemId = (SELECT id FROM Problem WHERE location = '{filename}');"
+        query2 = "DELETE FROM Problem WHERE location = '{filename}';"
 
-        result = self.app.db.execute(query.format(filename = fileName))
-        self.widgets["message"].configure(text = "{file} was successfully removed from the database".format(file = fileName))
+        self.app.db.execute(query1.format(filename = fileName))
+        self.app.db.execute(query2.format(filename = fileName))
+        self.widgets["message"][0].configure(text = "{file} was successfully removed from the database".format(file = fileName))
 
         self.searchCommand()
-        
+    
 
 
 class InfoMenu(GUIMenu):

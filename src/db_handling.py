@@ -6,7 +6,8 @@ class Database:
 
     def __init__(self, dbFileName):
 
-        self.cursor = connect(dbFileName).cursor()
+        self.connection = connect(dbFileName)
+        self.cursor = self.connection.cursor()
 
     def execute(self, string):
 
@@ -17,6 +18,7 @@ class Database:
             print(inst)
             return []
         else:
+            self.connection.commit()
             return result
 
 """
