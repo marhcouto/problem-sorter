@@ -8,16 +8,20 @@ from PIL import Image, ImageTk
 
 
 class GUIMenu:
+
     def __init__(self, app):
         self.widgets = {}
         self.app = app
         self.makeMenu()
 
+
     def addWidget(self, name, widget, position):
         self.widgets[name] = (widget, position);
 
+
     def removeWidget(self, name):
         self.widgets.pop(name)
+
 
     def place(self):
         for widget,pos in self.widgets.values():
@@ -26,9 +30,11 @@ class GUIMenu:
             elif pos.mode == Position.MODE_ABSOLUTE:
                 widget.place(x = pos.x, y = pos.y, anchor = pos.anchor)
 
+
     def unplace(self):
         for widget, position in self.widgets.values():
             widget.place_forget()
+
 
     def makeMenu():
         pass
@@ -39,6 +45,7 @@ class MainMenu(GUIMenu):
     def __init__(self, app):
         super().__init__(app)
 
+
     def makeMenu(self):
 
         self.addWidget("searchButton", Button(self.app.gui, text = "Search Problems", 
@@ -46,10 +53,10 @@ class MainMenu(GUIMenu):
         Position(0.5, 0.9, Position.MODE_RELATIVE, CENTER))
         self.addWidget("insertButton", Button(self.app.gui, text = "Insert Problems", 
         command = lambda : self.app.changeMenu(InsertMenu(self.app), False)),
-        Position(0.1, 0.9, Position.MODE_RELATIVE, CENTER))
+        Position(0.2, 0.9, Position.MODE_RELATIVE, CENTER))
         self.addWidget("deleteButton", Button(self.app.gui, text = "Instructions", 
         command = lambda : self.app.changeMenu(InfoMenu(self.app), False)),
-        Position(0.9, 0.9, Position.MODE_RELATIVE, CENTER))
+        Position(0.8, 0.9, Position.MODE_RELATIVE, CENTER))
         self.addWidget("menuLabel", Label(self.app.gui, text = "Welcome to Problem Sorter", font = font.Font(size = 30)),
         Position(0.5, 0.1, Position.MODE_RELATIVE, CENTER))
 
@@ -64,6 +71,7 @@ class SearchMenu(GUIMenu):
 
     def __init__(self, app):
         super().__init__(app)
+
 
     def makeMenu(self):
         
@@ -96,7 +104,7 @@ class SearchMenu(GUIMenu):
         self.addWidget("messageLabel", Label(self.widgets["resultsFrame"][0], text = "Messages", font = font.Font(size = 12, weight = "bold")), 
         Position(0.5, 0.1, Position.MODE_RELATIVE, CENTER))
 
-        self.addWidget("message", Message(self.widgets["resultsFrame"][0], text = "Awaiting actions", width = 200),
+        self.addWidget("message", Message(self.widgets["resultsFrame"][0], text = "Awaiting actions", width = 300),
         Position(0.1, 0.15, Position.MODE_RELATIVE, NW))
 
         # BUTTONS
@@ -115,6 +123,18 @@ class SearchMenu(GUIMenu):
         self.addWidget("search", Button(self.app.gui, text = "Search Files",
         command = self.searchCommand),
         Position(0.5, 0.9, Position.MODE_RELATIVE, CENTER))
+
+        self.addWidget("reset", Button(self.app.gui, text = "Reset",
+        command = self.resetCommand),
+        Position(0.8, 0.9, Position.MODE_RELATIVE, CENTER))
+
+
+    def resetCommand(self):
+
+        resultList = self.widgets["resultList"][0]
+        message = self.widgets["message"][0]
+        message.configure(text = "Awaiting actions")
+        resultList.delete(0, END)
 
 
     def initializeThemeList(self):
@@ -196,7 +216,7 @@ class SearchMenu(GUIMenu):
 
         self.app.db.execute(query1.format(filename = fileName))
         self.app.db.execute(query2.format(filename = fileName))
-        self.widgets["message"][0].configure(text = "{file} was successfully removed from the database".format(file = fileName))
+        self.widgets["message"][0].configure(text = "File successfully removed from the database")
 
         self.searchCommand()
         self.initializeThemeList()
@@ -208,17 +228,19 @@ class InfoMenu(GUIMenu):
     def __init__(self, app):
         super().__init__(app)
 
+
     def makeMenu(self):
         self.addWidget("menuLabel", Label(self.app.gui, text = "Instructions", font = font.Font(size = 26)),
         Position(0.5, 0.1, Position.MODE_RELATIVE, CENTER))
         self.addWidget("message", Message(self.app.gui, width = 800, text = " - In the search menu, you can search for exercises/exams containing exercises that associate with the themes you chose," +
-                                                                    "followed by lookup of the file or elimination of its registry.\n\n" +
+                                                                    " followed by lookup of the file or elimination of its registry.\n\n" +
                                                                     " - When multiple themes are selected, the files presented are the ones which associate with at least one of the themes.\n\n" + 
                                                                     " - In the insertion menu, you can insert new entries in the database, filling in the fields with the corresponding info." + 
-                                                                    "For one file, multiple themes can be inserted.\n\n" + 
+                                                                    " For one file, multiple themes can be inserted.\n\n" + 
                                                                     " - When a theme no longer has files associated to it, it will be automatically eliminated.\n\n" +
                                                                     " - For insertions, if new files are selected, they will be inserted; if the chosen file already exists, its themes will be updated," + 
-                                                                    " same goes for themes.", 
+                                                                    " same goes for themes.\n\n" +
+                                                                    " - Reset buttons serve to reset the current menu to its initial state, deleting the results of a search for example.", 
                                                                     font = font.Font(family = "Arial", size = 14)),
         Position(0.1, 0.2, Position.MODE_RELATIVE, NW))
         self.addWidget("goBack", Button(self.app.gui, text = "Go Back", 
@@ -230,6 +252,7 @@ class InsertMenu(GUIMenu):
 
     def __init__(self, app):
         super().__init__(app)
+
 
     def makeMenu(self):
 
@@ -268,6 +291,10 @@ class InsertMenu(GUIMenu):
 
         self.addWidget("submit", Button(self.app.gui, text = "Submit",
         command = self.submitionCommand),
+        Position(0.5, 0.9, Position.MODE_RELATIVE, CENTER))
+
+        self.addWidget("reset", Button(self.app.gui, text = "Reset",
+        command = self.resetCommand), 
         Position(0.8, 0.9, Position.MODE_RELATIVE, CENTER))
 
         self.addWidget("addButton", Button(self.app.gui, text = "Add theme",
@@ -278,6 +305,20 @@ class InsertMenu(GUIMenu):
         command = lambda : self.widgets["themeList"][0].delete(self.widgets["themeList"][0].curselection()[0]) if 0 < len(self.widgets["themeList"][0].curselection()) else "banana"),
         Position(0.6, 0.75, Position.MODE_RELATIVE, CENTER))
     
+
+    def resetCommand(self):
+
+        themeEntry = self.widgets["themeEntry"][0]
+        resultsEntry = self.widgets["resultsEntry"][0]
+        themeList = self.widgets["themeList"][0]
+        message = self.widgets["message"][0]
+
+        message.configure(text = "Awaiting actions")
+        themeList.delete(0, END)
+        themeEntry.delete(0, END)
+        resultsEntry.delete(0, END)
+
+
     def submitionCommand(self):
         
         themeList = self.widgets["themeList"][0]
@@ -306,6 +347,10 @@ class InsertMenu(GUIMenu):
 
         for i in themeIds:
             self.app.db.execute(insertPT.format(idT = i, idP = problemId))
+
+        self.resetCommand()
+
+        self.widgets["message"][0].configure(text = "Database successfully updated")
 
 
 

@@ -9,6 +9,7 @@ class Database:
         self.connection = connect(dbFileName)
         self.cursor = self.connection.cursor()
 
+
     def execute(self, string):
 
         try:

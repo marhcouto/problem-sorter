@@ -10,5 +10,7 @@ def main():
     app.changeMenu(MainMenu(app), True)
     app.run()
 
+
+
 if __name__ == "__main__":
     main()
