@@ -309,7 +309,7 @@ class InsertMenu(GUIMenu):
     def resetCommand(self):
 
         themeEntry = self.widgets["themeEntry"][0]
-        resultsEntry = self.widgets["resultsEntry"][0]
+        resultsEntry = self.widgets["pathEntry"][0]
         themeList = self.widgets["themeList"][0]
         message = self.widgets["message"][0]
 
