@@ -1,4 +1,6 @@
-import tkinter as tk
+#import tkinter as tk
+from tkinter import CENTER, NE, N, NW, SE, S, SW, W, E
+
 
 class Position:
 
@@ -47,4 +49,4 @@ class Position:
     
     @anchor.setter
     def anchor(self, newAnchor):
-        self.__anchor = newAnchor if newAnchor in [tk.CENTER, tk.NE, tk.SE, tk.NW, tk.SW, tk.S, tk.N, tk.E, tk.W] else tk.CENTER
+        self.__anchor = newAnchor if newAnchor in [CENTER, NE, SE, NW, SW, S, N, E, W] else CENTER

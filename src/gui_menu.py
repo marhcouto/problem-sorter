@@ -1,4 +1,4 @@
-from tkinter import CENTER, Button, Entry, Label, LabelFrame, Listbox, font, S, N, NE, NW, END, Message, Tk
+from tkinter import CENTER, Button, Entry, Label, LabelFrame, Listbox, font, S, N, NE, NW, END, Message, Tk, W, E
 
 from position import Position
 import os_tinkering
@@ -80,14 +80,16 @@ class SearchMenu(GUIMenu):
         Position(0.5, 0.1, Position.MODE_RELATIVE, CENTER))
         
         # FRAMES
-        self.addWidget("searchFrame", LabelFrame(self.app.gui, text = "Search Options", height = 400, width = 400, relief = "sunken", labelanchor = N, font = font.Font(size = 18)), 
+        self.addWidget("searchFrame", LabelFrame(self.app.gui, text = "Search Options", height = 300, width = 400, relief = "sunken", labelanchor = N, font = font.Font(size = 18)), 
         Position(0.05, 0.15, Position.MODE_RELATIVE, NW))
-        self.addWidget("resultsFrame", LabelFrame(self.app.gui, text = "Results", height = 400, width = 400, relief = "sunken", labelanchor = N, font = font.Font(size = 18)), 
+        self.addWidget("resultsFrame", LabelFrame(self.app.gui, text = "Results", height = 300, width = 400, relief = "sunken", labelanchor = N, font = font.Font(size = 18)), 
         Position(0.95, 0.15, Position.MODE_RELATIVE, NE))
+        self.addWidget("messageFrame", LabelFrame(self.app.gui, text = "Messages", height = 100, width = 700, relief = "sunken", labelanchor = N, font = font.Font(size = 18)),
+        Position(0.5, 0.68, Position.MODE_RELATIVE, N))
 
         # LEFTSIDE
-        self.addWidget("themeListLabel", Label(self.widgets["searchFrame"][0], text = "Themes", font = font.Font(size = 12, weight = "bold")), 
-        Position(0.5, 0.29, Position.MODE_RELATIVE, CENTER))
+        self.addWidget("themeListLabel", Label(self.widgets["searchFrame"][0], text = "Themes", font = font.Font(size = 12)), 
+        Position(0.08, 0.08, Position.MODE_RELATIVE, W))
 
         self.addWidget("themeList", Listbox(self.widgets["searchFrame"][0], height = 16, width = 50, selectmode = "multiple"), 
         Position(0.5, 0.85, Position.MODE_RELATIVE, S))
@@ -98,14 +100,14 @@ class SearchMenu(GUIMenu):
         self.addWidget("resultList", Listbox(self.widgets["resultsFrame"][0], height = 16, width = 50), 
         Position(0.5, 0.85, Position.MODE_RELATIVE, S))
 
-        self.addWidget("resultListLabel", Label(self.widgets["resultsFrame"][0], text = "Files", font = font.Font(size = 12, weight = "bold")),
-        Position(0.5, 0.29, Position.MODE_RELATIVE, CENTER))
+        self.addWidget("resultListLabel", Label(self.widgets["resultsFrame"][0], text = "File paths", font = font.Font(size = 12)),
+        Position(0.08, 0.08, Position.MODE_RELATIVE, W))
 
-        self.addWidget("messageLabel", Label(self.widgets["resultsFrame"][0], text = "Messages", font = font.Font(size = 12, weight = "bold")), 
-        Position(0.5, 0.1, Position.MODE_RELATIVE, CENTER))
+        #self.addWidget("messageLabel", Label(self.app.gui, text = "Messages", font = font.Font(size = 12, weight = "bold")), 
+        #Position(0.5, 0.7, Position.MODE_RELATIVE, CENTER))
 
-        self.addWidget("message", Message(self.widgets["resultsFrame"][0], text = "Awaiting actions", width = 300),
-        Position(0.1, 0.15, Position.MODE_RELATIVE, NW))
+        self.addWidget("message", Message(self.app.gui, text = "Awaiting actions", width = 600),
+        Position(0.2, 0.73, Position.MODE_RELATIVE, NW))
 
         # BUTTONS
         self.addWidget("lookupButton", Button(self.widgets["resultsFrame"][0], text = "Look up", 
