@@ -3,8 +3,9 @@ from tkinter import Tk
 
 class Application:
 
-    def __init__(self, db):
+    def __init__(self, db, icon):
         self.gui = Tk()
+        self.gui.iconbitmap("img/" + icon)
         self.gui.geometry("1000x600")
         self.gui.title("Problem Sorter")
         self.db = db

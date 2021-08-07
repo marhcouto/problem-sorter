@@ -6,7 +6,7 @@ from db_handling import Database
 
 def main():
 
-    app = Application(Database("problems.db"))
+    app = Application(Database("problems.db"), "icon.ico")
     app.changeMenu(MainMenu(app), True)
     app.run()
 
