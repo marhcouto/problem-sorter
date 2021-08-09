@@ -257,7 +257,7 @@ class InsertMenu(GUIMenu):
         Position(0.75, 0.35, Position.MODE_RELATIVE, CENTER))
 
         # LIST
-        self.addWidget("themeList", Listbox(self.app.gui, height = 16, width = 50), 
+        self.addWidget("themeList", Listbox(self.app.gui, height = 14, width = 50), 
         Position(0.5, 0.7, Position.MODE_RELATIVE, S))
 
         # ENTRIES
