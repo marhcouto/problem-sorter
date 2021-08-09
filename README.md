@@ -2,7 +2,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## General Info
-- **Environments:** Unix/Windows console
+- **Environments:** Linux/Windows 
 - **Tools:** sqlite3, conda, python3
 
 ## Description
