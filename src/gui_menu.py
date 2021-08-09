@@ -91,13 +91,13 @@ class SearchMenu(GUIMenu):
         self.addWidget("themeListLabel", Label(self.widgets["searchFrame"][0], text = "Themes", font = font.Font(size = 12)), 
         Position(0.08, 0.08, Position.MODE_RELATIVE, W))
 
-        self.addWidget("themeList", Listbox(self.widgets["searchFrame"][0], height = 16, width = 50, selectmode = "multiple"), 
+        self.addWidget("themeList", Listbox(self.widgets["searchFrame"][0], height = 10, width = 50, selectmode = "multiple"), 
         Position(0.5, 0.85, Position.MODE_RELATIVE, S))
 
         self.initializeThemeList()
 
         # RIGHTSIDE
-        self.addWidget("resultList", Listbox(self.widgets["resultsFrame"][0], height = 16, width = 50), 
+        self.addWidget("resultList", Listbox(self.widgets["resultsFrame"][0], height = 10, width = 50), 
         Position(0.5, 0.85, Position.MODE_RELATIVE, S))
 
         self.addWidget("resultListLabel", Label(self.widgets["resultsFrame"][0], text = "File paths", font = font.Font(size = 12)),
