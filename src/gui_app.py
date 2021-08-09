@@ -1,11 +1,13 @@
-
 from tkinter import Tk
+
+from os_tinkering import getOs
 
 class Application:
 
     def __init__(self, db, icon):
         self.gui = Tk()
-        self.gui.iconbitmap("img/" + icon)
+        if getOs() == "Windows":
+            self.gui.iconbitmap("img/" + icon)
         self.gui.geometry("1000x600")
         self.gui.title("Problem Sorter")
         self.db = db

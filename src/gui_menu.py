@@ -161,22 +161,9 @@ class SearchMenu(GUIMenu):
             self.widgets["message"][0].configure(text = "No files selected. Please select a file")
             return
 
-        newWindow = Tk()
-        newWindow.geometry("400x200")
-        newWindow.title("Choose viewer app")
-
-        okButton = Button(newWindow, text = "OK", command = lambda : [(lambda : os_tinkering.getFile(fileName, newList.get(0, END)[newList.curselection()[0]]))(), (lambda : newWindow.destroy())()])
-        newList = Listbox(newWindow, width = 20, height = 9)
-        newLabel = Label(newWindow, text = "Choose a program to visualize the file", font = font.Font(size = 12))
-
-        newList.insert(0, "Word")
-        newList.insert(0, "LibreOffice")
-        
-        newList.place(relx = 0.5, rely = 0.8, anchor = S)
-        newLabel.place(relx = 0.5, rely = 0.1, anchor = CENTER)
-        okButton.place(relx = 0.5, rely = 0.9, anchor = CENTER)
 
         fileName = self.widgets["resultList"][0].get(0, END)[self.widgets["resultList"][0].curselection()[0]]
+        os_tinkering.getFile(fileName)
     
 
     def searchCommand(self):
