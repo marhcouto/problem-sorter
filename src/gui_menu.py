@@ -103,9 +103,6 @@ class SearchMenu(GUIMenu):
         self.addWidget("resultListLabel", Label(self.widgets["resultsFrame"][0], text = "File paths", font = font.Font(size = 12)),
         Position(0.08, 0.08, Position.MODE_RELATIVE, W))
 
-        #self.addWidget("messageLabel", Label(self.app.gui, text = "Messages", font = font.Font(size = 12, weight = "bold")), 
-        #Position(0.5, 0.7, Position.MODE_RELATIVE, CENTER))
-
         self.addWidget("message", Message(self.app.gui, text = "Awaiting actions", width = 600),
         Position(0.2, 0.73, Position.MODE_RELATIVE, NW))
 
