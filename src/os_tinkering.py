@@ -12,9 +12,11 @@ def getOs():
 
 def getFile(fileName):
 
+    print(fileName)
+
     if getOs() == "Windows":
-        os.system("start {filename}".format(filename = fileName))
+        os.system("start '{filename}'".format(filename = fileName))
     elif getOs() == "Linux":
-        os.system("open {filename}".format(filename = fileName))
+        os.system("xdg-open '{filename}'".format(filename = fileName))
     elif getOs() == "Darwin":
-        os.system("open {filename}".format(filename = fileName))
+        os.system("open '{filename}'".format(filename = fileName))
