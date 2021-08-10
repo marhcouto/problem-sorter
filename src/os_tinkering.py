@@ -1,7 +1,8 @@
 import os
 import platform
+import sys
 
-DIR_NAME = os.path.dirname(__file__)
+DIR_NAME = sys._MEIPASS if getattr(sys, 'frozen', False) else os.path.dirname(__file__)
 
 
 def getOs():

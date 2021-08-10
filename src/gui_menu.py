@@ -200,22 +200,22 @@ class SearchMenu(GUIMenu):
 
         themeList = self.widgets["themeList"][0]
         resultList = self.widgets["resultList"][0]
-        list1 = []
+        themeSet = set()
 
         if len(themeList.curselection()) <= 0:
             query = "SELECT location FROM Problem;"
             for path in self.app.db.execute(query):
-                list1.append(path[0])
+                themeSet.add(path[0])
         else:
             query = "SELECT Problem.location FROM Problem JOIN ProblemTheme JOIN Theme ON Theme.id = ProblemTheme.themeID AND Problem.id = ProblemTheme.problemId AND Theme.name = '{theme}'"
             for i in themeList.curselection():
                 theme = themeList.get(0, END)[i]
                 for path in self.app.db.execute(query.format(theme = theme)):
-                    list1.append(path[0])
+                    themeSet.add(path[0])
 
         resultList.delete(0, END)
 
-        for path in list1:
+        for path in themeSet:
             resultList.insert(0, path)
 
         self.widgets["message"][0].configure(text = "Presenting search results")
