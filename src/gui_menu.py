@@ -59,7 +59,7 @@ class MainMenu(GUIMenu):
         self.addWidget("menuLabel", Label(self.app.gui, text = "Welcome to Problem Sorter", font = font.Font(size = 30)),
         Position(0.5, 0.1, Position.MODE_RELATIVE, CENTER))
 
-        self.image = ImageTk.PhotoImage(Image.open(os_tinkering.DIR_NAME + "/../img/theme.png"))
+        self.image = ImageTk.PhotoImage(Image.open(os_tinkering.IMAGE_PATH))
 
         self.addWidget("imageLabel", Label(image = self.image),
         Position(0.5, 0.5, Position.MODE_RELATIVE, CENTER))
