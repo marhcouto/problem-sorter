@@ -92,17 +92,17 @@ class SearchMenu(GUIMenu):
         self.addWidget("themeList", Listbox(self.widgets["themesFrame"][0], height = 10, width = LIST_WIDTH, selectmode = "multiple"), 
         Position(0.5, 0.85, Position.MODE_RELATIVE, S))
         self.addWidget("themeEntry", Entry(self.widgets["themesFrame"][0], relief = "sunken"),
-        Position(0.5, 0.25, Position.MODE_RELATIVE, CENTER))
+        Position(0.5, 0.1, Position.MODE_RELATIVE, CENTER))
 
         self.initializeThemeList()
 
         # RIGHTSIDE
         self.addWidget("resultList", Listbox(self.widgets["resultsFrame"][0], height = 10, width = LIST_WIDTH), 
         Position(0.5, 0.85, Position.MODE_RELATIVE, S))
-        self.addWidget("resultListLabel", Label(self.widgets["resultsFrame"][0], text = "File paths", font = font.Font(size = 14, underline = True)),
+        self.addWidget("resultListLabel", Label(self.widgets["resultsFrame"][0], text = "Files", font = font.Font(size = 14, underline = True)),
         Position(0.08, 0.08, Position.MODE_RELATIVE, W))
         self.addWidget("pathEntry", Entry(self.widgets["resultsFrame"][0], relief = "sunken"),
-        Position(0.5, 0.25, Position.MODE_RELATIVE, CENTER))
+        Position(0.5, 0.1, Position.MODE_RELATIVE, CENTER))
 
         self.addWidget("message", Message(self.app.gui, text = "Awaiting actions", width = 600),
         Position(0.2, 0.73, Position.MODE_RELATIVE, NW))
