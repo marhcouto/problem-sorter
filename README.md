@@ -26,11 +26,10 @@ This must be made in an environment containing the required libraries.
 
 ## Instructions
 
-- In the search menu, you can search for exercises/exams containing exercises that associate with the themes you chose, followed by lookup of the file or elimination of its registry.
-- Looking up a file means launching the default application assigned by the system to open files of such format.
-- When multiple themes are selected, the files presented are the ones which associate with at least one of the themes.
-- When no themes are selected, all files' paths will be displayed.
-- In the insertion menu, you can insert new entries in the database, filling in the fields with the corresponding info. For one file, multiple themes can be inserted. Deletion and insertion of themes is also possible. 
-- For insertions, if new files are selected, they will be inserted; if the chosen file already exists, its themes will be updated; same goes for themes.
-- Reset buttons serve to reset the current menu to its initial state, deleting the results of a search.
+- You can search for exercises/exams containing exercises that associate with the themes you selected on the theme list by pressing the 'Search' button. If no theme is selected, the search will retrieve all file paths registered in the database. When multiple themes are selected, the files presented are the ones which associate with at least one of the themes.
+- You can add new themes by entering their name in the left entry box and pressing the 'Add theme' button. Eliminating them is done by selecting from the theme list the themes you desired to remove and hitting the 'Remove theme' button.
+- Adding new file paths to the system is done in a similar manner, but you are required to select the themes you want to associate with the file prior to clicking the 'Add problem' button. For one file, multiple themes can be selected.
+- If you want to associate a file with one or more new themes, just type the name of the file and proceed as you would to add a new file.
+- Reset buttons serve to reset the menu to its initial state, deleting the results of a search for example.
+
 
