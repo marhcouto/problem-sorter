@@ -6,7 +6,7 @@ class Database:
 
     def __init__(self, dbFileName):
 
-        self.connection = connect("database/" + dbFileName)
+        self.connection = connect(dbFileName)
         self.cursor = self.connection.cursor()
 
 

@@ -1,10 +1,12 @@
 from tkinter import CENTER, Button, Entry, Label, LabelFrame, Listbox, font, S, N, NE, NW, END, Message, Tk, W, E
+from PIL import Image, ImageTk
 
 from position import Position
 import os_tinkering
-from PIL import Image, ImageTk
 
 
+
+LIST_WIDTH = 50 if os_tinkering.getOs() != "Darwin" else 25
 
 
 class GUIMenu:
@@ -16,7 +18,7 @@ class GUIMenu:
 
 
     def addWidget(self, name, widget, position):
-        self.widgets[name] = (widget, position);
+        self.widgets[name] = (widget, position)
 
 
     def removeWidget(self, name):
@@ -60,7 +62,7 @@ class MainMenu(GUIMenu):
         self.addWidget("menuLabel", Label(self.app.gui, text = "Welcome to Problem Sorter", font = font.Font(size = 30)),
         Position(0.5, 0.1, Position.MODE_RELATIVE, CENTER))
 
-        self.image = ImageTk.PhotoImage(Image.open("img/theme.png"))
+        self.image = ImageTk.PhotoImage(Image.open(os_tinkering.DIR_NAME + "/../img/theme.png"))
 
         self.addWidget("imageLabel", Label(image = self.image),
         Position(0.5, 0.5, Position.MODE_RELATIVE, CENTER))
@@ -88,19 +90,19 @@ class SearchMenu(GUIMenu):
         Position(0.5, 0.68, Position.MODE_RELATIVE, N))
 
         # LEFTSIDE
-        self.addWidget("themeListLabel", Label(self.widgets["searchFrame"][0], text = "Themes", font = font.Font(size = 12)), 
+        self.addWidget("themeListLabel", Label(self.widgets["searchFrame"][0], text = "Themes", font = font.Font(size = 14, underline = True)), 
         Position(0.08, 0.08, Position.MODE_RELATIVE, W))
 
-        self.addWidget("themeList", Listbox(self.widgets["searchFrame"][0], height = 10, width = 50, selectmode = "multiple"), 
+        self.addWidget("themeList", Listbox(self.widgets["searchFrame"][0], height = 10, width = LIST_WIDTH, selectmode = "multiple"), 
         Position(0.5, 0.85, Position.MODE_RELATIVE, S))
 
         self.initializeThemeList()
 
         # RIGHTSIDE
-        self.addWidget("resultList", Listbox(self.widgets["resultsFrame"][0], height = 10, width = 50), 
+        self.addWidget("resultList", Listbox(self.widgets["resultsFrame"][0], height = 10, width = LIST_WIDTH), 
         Position(0.5, 0.85, Position.MODE_RELATIVE, S))
 
-        self.addWidget("resultListLabel", Label(self.widgets["resultsFrame"][0], text = "File paths", font = font.Font(size = 12)),
+        self.addWidget("resultListLabel", Label(self.widgets["resultsFrame"][0], text = "File paths", font = font.Font(size = 14, underline = True)),
         Position(0.08, 0.08, Position.MODE_RELATIVE, W))
 
         self.addWidget("message", Message(self.app.gui, text = "Awaiting actions", width = 600),
@@ -257,13 +259,13 @@ class InsertMenu(GUIMenu):
         Position(0.75, 0.35, Position.MODE_RELATIVE, CENTER))
 
         # LIST
-        self.addWidget("themeList", Listbox(self.app.gui, height = 14, width = 50), 
+        self.addWidget("themeList", Listbox(self.app.gui, height = 14, width = LIST_WIDTH), 
         Position(0.5, 0.7, Position.MODE_RELATIVE, S))
 
         # ENTRIES
-        self.addWidget("themeEntry", Entry(self.app.gui, relief = "flat"),
+        self.addWidget("themeEntry", Entry(self.app.gui, relief = "sunken"),
         Position(0.3, 0.25, Position.MODE_RELATIVE, CENTER))
-        self.addWidget("pathEntry", Entry(self.app.gui, relief = "flat"),
+        self.addWidget("pathEntry", Entry(self.app.gui, relief = "sunken"),
         Position(0.7, 0.25, Position.MODE_RELATIVE, CENTER))
 
         # MESSAGE

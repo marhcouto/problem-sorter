@@ -1,7 +1,7 @@
 import os
 import platform
 
-
+DIR_NAME = os.path.dirname(__file__)
 
 
 def getOs():

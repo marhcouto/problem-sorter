@@ -6,8 +6,8 @@ class Application:
 
     def __init__(self, db, icon):
         self.gui = Tk()
-        if getOs() == "Windows":
-            self.gui.iconbitmap("img/" + icon)
+        if getOs() == "Windows" or getOs() == "Darwin":
+            self.gui.iconbitmap(icon)
         self.gui.geometry("1000x600")
         self.gui.title("Problem Sorter")
         self.db = db
