@@ -50,7 +50,7 @@ class MainMenu(GUIMenu):
 
     def makeMenu(self):
 
-        self.addWidget("searchButton", Button(self.app.gui, text = "Search Problems", 
+        self.addWidget("searchButton", Button(self.app.gui, text = "Search/Delete Problems", 
         command = lambda : self.app.changeMenu(SearchMenu(self.app), False)), 
         Position(0.5, 0.9, Position.MODE_RELATIVE, CENTER))
         self.addWidget("insertButton", Button(self.app.gui, text = "Insert Problems", 
@@ -140,8 +140,6 @@ class SearchMenu(GUIMenu):
 
     def initializeThemeList(self):
 
-        self.refreshThemes()
-
         getThemesQuery = "SELECT name FROM Theme;"
         themeList = self.widgets["themeList"][0]
 
@@ -149,12 +147,6 @@ class SearchMenu(GUIMenu):
 
         for line in self.app.db.execute(getThemesQuery):
             themeList.insert(0, line[0])
-
-
-    def refreshThemes(self):
-
-        eliminateThemesQuery = "DELETE FROM Theme WHERE NOT EXISTS (SELECT * FROM ProblemTheme WHERE themeId = Theme.id);"
-        self.app.db.execute(eliminateThemesQuery)
 
 
     def lookupCommand(self):
@@ -190,6 +182,8 @@ class SearchMenu(GUIMenu):
         for path in list1:
             resultList.insert(0, path)
 
+        self.widgets["message"][0].configure(text = "Presenting search results")
+
 
     def deleteCommand(self):
 
@@ -207,7 +201,7 @@ class SearchMenu(GUIMenu):
         self.widgets["message"][0].configure(text = "File successfully removed from the database")
 
         self.searchCommand()
-        self.initializeThemeList()
+
     
 
 
@@ -224,8 +218,7 @@ class InfoMenu(GUIMenu):
                                                                     " followed by lookup of the file or elimination of its registry.\n\n" +
                                                                     " - When multiple themes are selected, the files presented are the ones which associate with at least one of the themes.\n\n" + 
                                                                     " - In the insertion menu, you can insert new entries in the database, filling in the fields with the corresponding info." + 
-                                                                    " For one file, multiple themes can be inserted.\n\n" + 
-                                                                    " - When a theme no longer has files associated to it, it will be automatically eliminated.\n\n" +
+                                                                    " For one file, multiple themes can be selected. Deletion and insertion of themes is also possible.\n\n" + 
                                                                     " - For insertions, if new files are selected, they will be inserted; if the chosen file already exists, its themes will be updated," + 
                                                                     " same goes for themes.\n\n" +
                                                                     " - Reset buttons serve to reset the current menu to its initial state, deleting the results of a search for example.", 
@@ -249,11 +242,11 @@ class InsertMenu(GUIMenu):
         Position(0.5, 0.1, Position.MODE_RELATIVE, CENTER))
 
         # LABELS
-        self.addWidget("themeLabel", Label(self.app.gui, text = "Theme", font = font.Font(size = 12, weight = "bold")),
+        self.addWidget("themeLabel", Label(self.app.gui, text = "Add a Theme", font = font.Font(size = 12, weight = "bold")),
         Position(0.3, 0.2, Position.MODE_RELATIVE, CENTER))
         self.addWidget("pathLabel", Label(self.app.gui, text = "Document's path", font = font.Font(size = 12, weight = "bold")),
         Position(0.7, 0.2, Position.MODE_RELATIVE, CENTER))
-        self.addWidget("listLabel", Label(self.app.gui, text = "Themes selected", font = font.Font(size = 12, weight = "bold")),
+        self.addWidget("listLabel", Label(self.app.gui, text = "Themes", font = font.Font(size = 12, weight = "bold")),
         Position(0.5, 0.35, Position.MODE_RELATIVE, CENTER))
         self.addWidget("messageLabel", Label(self.app.gui, text = "Messages", font = font.Font(size = 12, weight = "bold")),
         Position(0.75, 0.35, Position.MODE_RELATIVE, CENTER))
@@ -261,6 +254,8 @@ class InsertMenu(GUIMenu):
         # LIST
         self.addWidget("themeList", Listbox(self.app.gui, height = 14, width = LIST_WIDTH), 
         Position(0.5, 0.7, Position.MODE_RELATIVE, S))
+
+        self.initializeThemeList()
 
         # ENTRIES
         self.addWidget("themeEntry", Entry(self.app.gui, relief = "sunken"),
@@ -286,49 +281,80 @@ class InsertMenu(GUIMenu):
         Position(0.8, 0.9, Position.MODE_RELATIVE, CENTER))
 
         self.addWidget("addButton", Button(self.app.gui, text = "Add theme",
-        command = lambda : self.widgets["themeList"][0].insert(0, self.widgets["themeEntry"][0].get())),
+        command = self.addThemeCommand),
         Position(0.4, 0.75, Position.MODE_RELATIVE, CENTER))
 
         self.addWidget("removeButton", Button(self.app.gui, text = "Remove theme", 
-        command = lambda : self.widgets["themeList"][0].delete(self.widgets["themeList"][0].curselection()[0]) if 0 < len(self.widgets["themeList"][0].curselection()) else "banana"),
+        command = self.removeThemeCommand),
         Position(0.6, 0.75, Position.MODE_RELATIVE, CENTER))
+
     
+    def initializeThemeList(self):
+
+        getThemesQuery = "SELECT name FROM Theme;"
+        themeList = self.widgets["themeList"][0]
+
+        themeList.delete(0, END)
+
+        for line in self.app.db.execute(getThemesQuery):
+            themeList.insert(0, line[0])
+
+
+    def removeThemeCommand(self):
+
+        themeList = self.widgets["themeList"][0]
+        removeTheme = "DELETE FROM Theme WHERE name = '{theme}';"
+        removeTheme2 = "DELETE FROM ProblemTheme WHERE EXISTS (SELECT * FROM Theme WHERE id = themeId AND name = '{theme}');"
+
+        for i in themeList.curselection():
+            theme = themeList.get(0, END)[i]
+            self.app.db.execute(removeTheme2.format(theme = theme))
+            self.app.db.execute(removeTheme.format(theme = theme))
+
+        self.initializeThemeList()
+        self.widgets["message"][0].configure(text = "Theme removed from database")
+
 
     def resetCommand(self):
 
         themeEntry = self.widgets["themeEntry"][0]
-        resultsEntry = self.widgets["pathEntry"][0]
-        themeList = self.widgets["themeList"][0]
+        pathEntry = self.widgets["pathEntry"][0]
         message = self.widgets["message"][0]
 
         message.configure(text = "Awaiting actions")
-        themeList.delete(0, END)
         themeEntry.delete(0, END)
-        resultsEntry.delete(0, END)
+        pathEntry.delete(0, END)
+
+    
+    def addThemeCommand(self):
+
+        theme = self.widgets["themeEntry"][0].get()
+        insertThemes = "INSERT INTO Theme (name) VALUES('{theme}');"
+        self.app.db.execute(insertThemes.format(theme = theme))
+        self.initializeThemeList()
+        self.widgets["message"][0].configure(text = "Theme added to database")
 
 
     def submitionCommand(self):
         
         themeList = self.widgets["themeList"][0]
 
-        if len(themeList.get(0, END)) <= 0:
-            self.widgets["message"][0].configure(text = "No themes selected. Please, add a theme to the theme list")
+        if len(themeList.curselection()) <= 0:
+            self.widgets["message"][0].configure(text = "No themes selected. Please, select a theme from the theme list")
             return
 
         path = self.widgets["pathEntry"][0].get()
         insertProblem = "INSERT INTO Problem (location) VALUES('{path}');".format(path = path)
-        insertThemes = "INSERT INTO Theme (name) VALUES('{theme}');"
         insertPT = "INSERT INTO ProblemTheme (themeId, problemId) VALUES({idT}, {idP});"
         getThemeIds = "SELECT id FROM Theme WHERE name = '{theme}';"
         getProblemId = "SELECT id FROM Problem WHERE location = '{path}';".format(path = path)
 
-        for theme in themeList.get(0, END):
-            self.app.db.execute(insertThemes.format(theme = theme))
         self.app.db.execute(insertProblem)
         
         themeIds = set()
 
-        for theme in themeList.get(0, END):
+        for i in themeList.curselection():
+            theme = themeList.get(0, END)[i]
             themeIds.add(self.app.db.execute(getThemeIds.format(theme = theme))[0][0])
 
         problemId = self.app.db.execute(getProblemId)[0][0]

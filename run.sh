@@ -2,5 +2,5 @@
 
 
 
-python /Users/carlahenriques/problem-sorter/src/main.py
+python src/main.py
 exit

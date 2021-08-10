@@ -12,8 +12,6 @@ def getOs():
 
 def getFile(fileName):
 
-    print(fileName)
-
     if getOs() == "Windows":
         os.system("start '{filename}'".format(filename = fileName))
     elif getOs() == "Linux":
