@@ -24,8 +24,7 @@ To launch the app through the bash script:
 This must be made in an environment containing the required libraries.
 
 ## Download
-You can find and download a packaged version of this app for multiple OS's in this repo:
-https://github.com/marhcouto/problem-sorter-exe
+You can find and download a packaged version of this app for multiple OS's [here](https://github.com/marhcouto/problem-sorter-exe)
 
 
 ## Instructions
