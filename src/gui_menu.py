@@ -200,22 +200,24 @@ class SearchMenu(GUIMenu):
 
         themeList = self.widgets["themeList"][0]
         resultList = self.widgets["resultList"][0]
-        themeSet = set()
+        resultSet = set()
 
-        if len(themeList.curselection()) <= 0:
-            query = "SELECT location FROM Problem;"
-            for path in self.app.db.execute(query):
-                themeSet.add(path[0])
-        else:
+        query = "SELECT location FROM Problem;"
+        for path in self.app.db.execute(query):
+            resultSet.add(path[0])
+        
+        if len(themeList.curselection()) > 0:
             query = "SELECT Problem.location FROM Problem JOIN ProblemTheme JOIN Theme ON Theme.id = ProblemTheme.themeID AND Problem.id = ProblemTheme.problemId AND Theme.name = '{theme}'"
             for i in themeList.curselection():
                 theme = themeList.get(0, END)[i]
+                tempSet = set()
                 for path in self.app.db.execute(query.format(theme = theme)):
-                    themeSet.add(path[0])
+                    tempSet.add(path[0])
+                resultSet = resultSet.intersection(tempSet)
 
         resultList.delete(0, END)
 
-        for path in themeSet:
+        for path in resultSet:
             resultList.insert(0, path)
 
         self.widgets["message"][0].configure(text = "Presenting search results")
@@ -284,7 +286,7 @@ class InfoMenu(GUIMenu):
         Position(0.5, 0.1, Position.MODE_RELATIVE, CENTER))
         self.addWidget("message", Message(self.app.gui, width = 800, text = " - You can search for exercises/exams containing exercises that associate with the themes you selected on the theme list by pressing the 'Search' button." +
                                                                     " If no theme is selected, the search will retrieve all file paths registered in the database." +
-                                                                    " When multiple themes are selected, the files presented are the ones which associate with at least one of the themes.\n\n" + 
+                                                                    " When multiple themes are selected, the files presented are the ones which associate with all of the selected themes.\n\n" + 
                                                                     " - You can add new themes by entering their name in the left entry box and pressing the 'Add theme' button. Eliminating them is done by selecting from the theme list the themes you desired to remove and hitting the 'Remove theme' button.\n\n" + 
                                                                     " - Adding new file paths to the system is done in a similar manner, but you are required to select the themes you want to associate with the file prior to clicking the 'Add problem' button. For one file, multiple themes can be selected.\n\n" + 
                                                                     " - If you want to associate a file with one or more new themes, just type the name of the file and proceed as you would to add a new file.\n\n" + 
